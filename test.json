@@ -1,0 +1,184 @@
+{
+    "0781-2025": {
+        "id": "0781",
+        "year": "2025",
+        "content": "EPSON USB TSE Epson USB TSE 1.0.4\/1.0.3, 1.1.0\/1.1.0, 1.0.4\/1.1.0, 1.1.1\/1.1.0 Epson microSD TSE 1.0.4\/1.0.3, 1.1.0\/1.1.0",
+        "manufacturer": "Epson Europe BV",
+        "date_issuance": "30.04.2025"
+    },
+    "0775-2025": {
+        "id": "0775",
+        "year": "2025",
+        "content": "Diebold TSE-Card Version 1.0.4\/1.0.3, 1.1.0\/1.1.0",
+        "manufacturer": "Diebold Nixdorf Systems GmbH",
+        "date_issuance": "30.04.2025"
+    },
+    "0717-2025": {
+        "id": "0717",
+        "year": "2025",
+        "content": "fiskaly sign Cloud-TSE Version 1.0.15-1.5.0",
+        "manufacturer": "fiskaly GmbH",
+        "date_issuance": "31.03.2025"
+    },
+    "0626-2024": {
+        "id": "0626",
+        "year": "2024",
+        "content": "EPSON USB TSE Version 1.1.1",
+        "manufacturer": "Epson Europe BV",
+        "date_issuance": "08.07.2024"
+    },
+    "0620-2025": {
+        "id": "0620",
+        "year": "2025",
+        "content": "Swissbit USB TSE Version 1.1",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "30.04.2025"
+    },
+    "0612-2024": {
+        "id": "0612",
+        "year": "2024",
+        "content": "Swissbit Cloud TSE 2",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "27.03.2025"
+    },
+    "0591-2024": {
+        "id": "0591",
+        "year": "2024",
+        "content": "cryptovision TSE v2.1",
+        "manufacturer": "cv cryptovision GmbH",
+        "date_issuance": "18.11.2024"
+    },
+    "0563-2023": {
+        "id": "0563",
+        "year": "2023",
+        "content": "Swissbit USB TSE Version 1.1.1\/1.1.0",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "05.06.2023"
+    },
+    "0526-2022": {
+        "id": "0526",
+        "year": "2022",
+        "content": "DF Fiskal Cloud Manager Version 1.0",
+        "manufacturer": "DF Deutsche Fiskal GmbH",
+        "date_issuance": "16.05.2022"
+    },
+    "0525-2022": {
+        "id": "0525",
+        "year": "2022",
+        "content": "Fiskal Cloud-TSE Version 4.0",
+        "manufacturer": "DF Deutsche Fiskal GmbH",
+        "date_issuance": "16.05.2022"
+    },
+    "0524-2024": {
+        "id": "0524",
+        "year": "2024",
+        "content": "D-TRUST Web-Dienst f\u00fcr TSE Version 3.1",
+        "manufacturer": "D-TRUST GmbH",
+        "date_issuance": "26.02.2024"
+    },
+    "0522-2025": {
+        "id": "0522",
+        "year": "2025",
+        "content": "fiskaly sign Cloud-TSE Version 1.0.12-1.4.1",
+        "manufacturer": "fiskaly GmbH",
+        "date_issuance": "13.01.2025"
+    },
+    "0490-2021": {
+        "id": "0490",
+        "year": "2021",
+        "content": "fiskaly sign Cloud-TSE Version 1.0.6-1.3.0",
+        "manufacturer": "fiskaly GmbH",
+        "date_issuance": "10.12.2021"
+    },
+    "0487-2021": {
+        "id": "0487",
+        "year": "2021",
+        "content": "EPSON USB TSE Version 1.0.4\/1.1.0",
+        "manufacturer": "Epson Europe BV",
+        "date_issuance": "23.09.2021"
+    },
+    "0482-2023": {
+        "id": "0482",
+        "year": "2023",
+        "content": "cryptovision TSE v2",
+        "manufacturer": "cv cryptovision GmbH",
+        "date_issuance": "15.05.2023"
+    },
+    "0477-2021": {
+        "id": "0477",
+        "year": "2021",
+        "content": "Swissbit USB TSE Version 1.0.4\/1.1.0",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "25.06.2021"
+    },
+    "0474-2021": {
+        "id": "0474",
+        "year": "2021",
+        "content": "D-TRUST Web-Dienst f\u00fcr TSE Version 3.0",
+        "manufacturer": "D-TRUST GmbH",
+        "date_issuance": "10.12.2021"
+    },
+    "0448-2021": {
+        "id": "0448",
+        "year": "2021",
+        "content": "D-TRUST Web-Dienst f\u00fcr Android TSE Version 1.0",
+        "manufacturer": "D-TRUST GmbH",
+        "date_issuance": "10.12.2021"
+    },
+    "0415-2021": {
+        "id": "0415",
+        "year": "2021",
+        "content": "Diebold TSE-Card Version 1.1",
+        "manufacturer": "Diebold Nixdorf Systems GmbH",
+        "date_issuance": "11.01.2021"
+    },
+    "0414-2020": {
+        "id": "0414",
+        "year": "2020",
+        "content": "EPSON USB TSE, Vers. 1.1 EPSON microSD TSE, Vers. 1.1",
+        "manufacturer": "Epson Europe BV",
+        "date_issuance": "11.12.2020"
+    },
+    "0412-2020": {
+        "id": "0412",
+        "year": "2020",
+        "content": "Swissbit TSE, Version 1.0 Swissbit USB TSE Swissbit SD TSE Swissbit microSD TSE",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "27.11.2020"
+    },
+    "0403-2021": {
+        "id": "0403",
+        "year": "2021",
+        "content": "fiskaly sign Cloud-TSE Version 1.2.0-1.0.5",
+        "manufacturer": "fiskaly GmbH",
+        "date_issuance": "28.05.2021"
+    },
+    "0393-2020": {
+        "id": "0393",
+        "year": "2020",
+        "content": "Diebold Nixdorf TSE-Card Version 1.0",
+        "manufacturer": "Diebold Nixdorf Systems GmbH",
+        "date_issuance": "20.02.2020"
+    },
+    "0374-2020": {
+        "id": "0374",
+        "year": "2020",
+        "content": "Bundesdruckerei D-TRUST TSE Version 1.0",
+        "manufacturer": "cv cryptovision GmbH",
+        "date_issuance": "14.04.2020"
+    },
+    "0373-2019": {
+        "id": "0373",
+        "year": "2019",
+        "content": "EPSON USB TSE, Vers. 1.0 EPSON microSD TSE, Vers. 1.0",
+        "manufacturer": "Epson Europe BV",
+        "date_issuance": "20.12.2019"
+    },
+    "0362-2019": {
+        "id": "0362",
+        "year": "2019",
+        "content": "Swissbit TSE, Version 1.0 Swissbit USB TSE Swissbit SD TSE Swissbit microSD TSE",
+        "manufacturer": "Swissbit AG",
+        "date_issuance": "20.12.2019"
+    }
+}

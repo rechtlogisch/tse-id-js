@@ -1,0 +1,143 @@
+name: Docker Optimized CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ hashFiles('package-lock.json') }}-${{ matrix.node-version }}
+        restore-keys: |
+          playwright-${{ hashFiles('package-lock.json') }}-
+          playwright-
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run build
+      run: npm run build
+
+  docker-scrape:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Cache Docker layers
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        load: true
+        tags: tse-scraper:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+    - name: Run scraper with Docker
+      run: |
+        docker run --rm -v $(pwd):/output tse-scraper:latest --output /output/tse-data.json --pretty
+
+    - name: Upload TSE data
+      uses: actions/upload-artifact@v4
+      with:
+        name: tse-data-docker
+        path: tse-data.json
+        retention-days: 30
+
+  performance-comparison:
+    runs-on: ubuntu-latest
+    needs: [test, docker-scrape]
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ hashFiles('package-lock.json') }}-20
+        restore-keys: |
+          playwright-${{ hashFiles('package-lock.json') }}-
+          playwright-
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Time native execution
+      run: |
+        echo "Starting native execution timing..."
+        start_time=$(date +%s)
+        npm run scrape -- -o native-data.json -p
+        end_time=$(date +%s)
+        native_time=$((end_time - start_time))
+        echo "Native execution time: ${native_time}s"
+
+    - name: Comment performance comparison
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const nativeData = JSON.parse(fs.readFileSync('native-data.json', 'utf8'));
+          const nativeCount = Object.keys(nativeData).length;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `🚀 Performance Comparison Results:\n- Native execution: ${nativeCount} entries\n- Docker execution: Available in artifacts\n- Both methods completed successfully!`
+          });

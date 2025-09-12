@@ -1,0 +1,1 @@
+- [ ] instead of providing maxPages determine how many pages are there for example as I did in PHP in https://github.com/rechtlogisch/tse-id-php/blob/main/src/Retrieve.php#L52-L56
