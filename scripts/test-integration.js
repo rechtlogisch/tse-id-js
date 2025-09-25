@@ -6,7 +6,7 @@ async function testIntegration() {
     console.log('Testing retrieve...');
     const data = await retrieve();
     
-    console.log(`✅ Successfully retrieved ${Object.keys(data).length} TSE entries`);
+    console.log(`✅ Successfully retrieved ${Object.keys(data).length} entries`);
     
     // Check if we have the expected structure
     const firstKey = Object.keys(data)[0];

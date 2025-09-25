@@ -64,7 +64,7 @@ RUN playwright install-deps chromium
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 tse-retrieve
+RUN adduser --system --uid 1001 retrieve
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
@@ -72,8 +72,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
 
 # Change ownership to non-root user
-RUN chown -R tse-retrieve:nodejs /app
-USER tse-retrieve
+RUN chown -R retrieve:nodejs /app
+USER retrieve
 
 # Expose port (if needed for health checks)
 EXPOSE 3000

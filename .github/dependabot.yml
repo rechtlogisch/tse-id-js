@@ -43,11 +43,6 @@ updates:
         update-types:
           - "minor"
           - "patch"
-      security-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "security"
 
   # Docker dependencies
   - package-ecosystem: "docker"

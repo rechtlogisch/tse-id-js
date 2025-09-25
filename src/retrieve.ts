@@ -227,8 +227,7 @@ export class Retrieve {
         rows.forEach((row: Element) => {
           const cells = row.querySelectorAll('td');
           if (cells.length >= 4) {
-            // Extract data from table cells - the actual structure seems to be:
-            // Column 0: ID (like "BSI-K-TR-0781-2025")
+            // Column 0: ID (like "BSI-K-TR-1234-2000")
             // Column 1: Content/Description
             // Column 2: Manufacturer
             // Column 3: Date of issuance

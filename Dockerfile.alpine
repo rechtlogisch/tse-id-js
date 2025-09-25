@@ -44,8 +44,8 @@ COPY package*.json ./
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 tse-retrieve
-USER tse-retrieve
+RUN adduser --system --uid 1001 retrieve
+USER retrieve
 
 # Expose port (if needed for health checks)
 EXPOSE 3000

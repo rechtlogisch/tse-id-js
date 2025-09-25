@@ -21,16 +21,16 @@ npm install tse-id
 
 ```bash
 # Basic usage - output to stdout
-npx tse-id-js
+npx tse-id
 
 # Pretty print output
-npx tse-id-js --pretty
+npx tse-id --pretty
 
 # Save to file
-npx tse-id-js --output data.json
+npx tse-id --output data.json
 
 # Pretty print and save to file
-npx tse-id-js --output data.json --pretty
+npx tse-id --output data.json --pretty
 ```
 
 #### CLI Options
@@ -106,13 +106,13 @@ jobs:
   retrieve:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
-      - run: npm install tse-id-js
-      - run: npx tse-id-js --output list.json --pretty
+      - run: npm install tse-id
+      - run: npx tse-id --output list.json --pretty
       - uses: actions/upload-artifact@v4
         with:
           name: list

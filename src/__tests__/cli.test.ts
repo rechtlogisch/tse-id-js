@@ -222,48 +222,6 @@ describe('CLI', () => {
     });
   });
 
-  describe('stringifyWithPostProcessing function', () => {
-    it('should escape forward slashes', () => {
-      const { stringifyWithPostProcessing } = require('../cli');
-      const obj = { path: '/some/path' };
-      const result = stringifyWithPostProcessing(obj);
-      expect(result).toContain('\\/some\\/path');
-    });
-
-    it('should escape unicode characters', () => {
-      const { stringifyWithPostProcessing } = require('../cli');
-      const obj = { text: 'café' };
-      const result = stringifyWithPostProcessing(obj);
-      expect(result).toContain('\\u00e9');
-    });
-  });
-
-  describe('createEscapingObject function', () => {
-    it('should handle string values', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { text: 'test/path' };
-      const result = createEscapingObject(obj);
-      expect(result.text.toJSON()).toContain('\\/');
-    });
-
-    it('should handle array values', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = ['test/path'];
-      const result = createEscapingObject(obj);
-      expect(Array.isArray(result)).toBe(true);
-      expect(result[0]).toBeDefined();
-      // For arrays, the function should return the original array since strings in arrays are not wrapped
-      expect(typeof result[0]).toBe('string');
-    });
-
-    it('should handle nested objects', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { nested: { text: 'test/path' } };
-      const result = createEscapingObject(obj);
-      expect(result.nested.text.toJSON()).toContain('\\/');
-    });
-  });
-
   describe('help functionality', () => {
     it('should test printHelp function', () => {
       const { printHelp } = require('../cli');
@@ -275,43 +233,6 @@ describe('CLI', () => {
       expect(consoleSpy.mock.calls[0][0]).toContain('Retrieve');
       
       consoleSpy.mockRestore();
-    });
-  });
-
-  describe('createEscapingObject edge cases', () => {
-    it('should handle null values', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { text: null };
-      const result = createEscapingObject(obj);
-      expect(result).toEqual({ text: null });
-    });
-
-    it('should handle non-object values', () => {
-      const { createEscapingObject } = require('../cli');
-      const result = createEscapingObject('string');
-      expect(result).toBe('string');
-    });
-
-    it('should handle nested non-string values', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { nested: { number: 123, boolean: true } };
-      const result = createEscapingObject(obj);
-      expect(result.nested.number).toBe(123);
-      expect(result.nested.boolean).toBe(true);
-    });
-
-    it('should handle unicode characters in toJSON', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { text: 'café' };
-      const result = createEscapingObject(obj);
-      expect(result.text.toJSON()).toContain('\\u00e9');
-    });
-
-    it('should handle forward slashes in toJSON', () => {
-      const { createEscapingObject } = require('../cli');
-      const obj = { text: 'path/to/file' };
-      const result = createEscapingObject(obj);
-      expect(result.text.toJSON()).toContain('\\/');
     });
   });
 

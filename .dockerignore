@@ -14,9 +14,7 @@ coverage
 .DS_Store
 dist
 *.log
-test.json
-example.json
-test-integration.js
+data.json
 src/__tests__
 .github
 jest.config.js
