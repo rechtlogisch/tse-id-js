@@ -2,11 +2,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    'integration\\.test\\.ts$'  // Exclude integration tests by default
-  ],
+  testMatch: ['**/__tests__/**/*.integration.test.ts'],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
@@ -24,5 +20,3 @@ module.exports = {
     'node_modules/(?!(.*\\.mjs$))'
   ],
 };
-
-

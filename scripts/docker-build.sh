@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Docker build script for TSE Scraper
+# Docker build script
 # Usage: ./scripts/docker-build.sh [ubuntu|alpine|both]
 
 set -e
 
 BUILD_TYPE=${1:-ubuntu}
-IMAGE_NAME="tse-scraper"
+IMAGE_NAME="tse-id"
 
-echo "🐳 Building TSE Scraper Docker image..."
+echo "🐳 Building Docker image..."
 
 case $BUILD_TYPE in
   "ubuntu")

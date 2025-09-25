@@ -1,5 +1,5 @@
 # Multi-stage build for optimal performance
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage - Use Ubuntu for better Playwright support
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 
 # Install system dependencies for Playwright
@@ -64,7 +64,7 @@ RUN playwright install-deps chromium
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 tse-scraper
+RUN adduser --system --uid 1001 tse-retrieve
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
@@ -72,8 +72,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
 
 # Change ownership to non-root user
-RUN chown -R tse-scraper:nodejs /app
-USER tse-scraper
+RUN chown -R tse-retrieve:nodejs /app
+USER tse-retrieve
 
 # Expose port (if needed for health checks)
 EXPOSE 3000

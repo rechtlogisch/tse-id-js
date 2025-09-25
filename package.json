@@ -1,55 +1,58 @@
 {
   "name": "tse-id-js",
-  "version": "0.0.1",
-  "description": "Node.js package to fetch TSE system details from BSI website",
+  "version": "0.1.0",
+  "description": "Retrieves a list of TSE from BSI",
   "main": "dist/index.js",
   "bin": {
     "tse-id-js": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc --build",
     "build:clean": "rm -rf dist && tsc",
-    "start": "node dist/cli.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "build": "tsc --build",
     "dev": "ts-node src/cli.ts",
-    "scrape": "npm run build && node dist/cli.js",
-    "scrape:fast": "npm run build && node dist/cli.js --headless",
-    "perf:test": "node scripts/performance-test.js",
-    "docker:build": "./scripts/docker-build.sh ubuntu",
-    "docker:build:alpine": "./scripts/docker-build.sh alpine",
     "docker:build:all": "./scripts/docker-build.sh both",
-    "docker:test": "docker run --rm tse-scraper:latest --help"
+    "docker:build:alpine": "./scripts/docker-build.sh alpine",
+    "docker:build": "./scripts/docker-build.sh ubuntu",
+    "docker:test:help": "docker run --rm tse-retrieve:latest --help",
+    "performance:test": "node scripts/performance-test.js",
+    "retrieve": "npm run build && node dist/cli.js",
+    "start": "node dist/cli.js",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test": "jest",
+    "test:unit": "jest --testPathIgnorePatterns=integration",
+    "test:integration": "jest --config jest.integration.config.js",
+    "test:external": "npm run test:integration"
   },
   "keywords": [
-    "tse",
-    "bsi",
-    "germany",
-    "fiscal",
-    "scraping",
-    "playwright"
+    "rechtlogisch",
+    "tse-id",
+    "technische sicherheitseinrichtungen",
+    "germany"
   ],
-  "author": "rechtlogisch",
+  "author": "RL Recht logisch GmbH & Co. KG",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^29.5.8",
-    "@types/node": "^20.8.10",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "@types/jest": "^30.0",
+    "@types/node": "^24.0",
+    "jest": "^30.0",
+    "ts-jest": "^29.1",
+    "ts-node": "^10.9",
+    "typescript": "^5.2"
   },
   "dependencies": {
-    "playwright": "^1.40.0"
+    "playwright": "^1.40"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0"
+  },
+  "overrides": {
+    "glob": "^10.0.0"
   },
   "files": [
     "dist/**/*",
     "README.md",
-    "LICENSE"
+    "LICENSE.md"
   ]
 }
 

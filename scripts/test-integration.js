@@ -1,12 +1,12 @@
 // Simple integration test
-const { fetchTSEData } = require('./dist/index');
+const { retrieve } = require('./dist/index');
 
 async function testIntegration() {
   try {
-    console.log('Testing TSE data fetching...');
-    const data = await fetchTSEData();
+    console.log('Testing retrieve...');
+    const data = await retrieve();
     
-    console.log(`✅ Successfully fetched ${Object.keys(data).length} TSE entries`);
+    console.log(`✅ Successfully retrieved ${Object.keys(data).length} TSE entries`);
     
     // Check if we have the expected structure
     const firstKey = Object.keys(data)[0];

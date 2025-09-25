@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { TSEScraper } from './scraper';
+import { Retrieve } from './retrieve';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
@@ -42,9 +42,9 @@ export function parseArgs(): CLIOptions {
   return options;
 }
 
-function printHelp(): void {
+export function printHelp(): void {
   console.log(`
-TSE ID Scraper - Fetch TSE system details from BSI website
+Retrieves a list of TSE from BSI
 
 Usage: tse-id-js [options]
 
@@ -61,7 +61,7 @@ Examples:
 `);
 }
 
-function stringifyWithEscaping(obj: any, pretty: boolean = false): string {
+export function stringifyWithEscaping(obj: any, pretty: boolean = false): string {
   // Use post-processing approach to avoid double escaping
   let jsonString = JSON.stringify(obj, null, pretty ? 4 : 0);
   
@@ -78,7 +78,7 @@ function stringifyWithEscaping(obj: any, pretty: boolean = false): string {
 }
 
 // Alternative native approach 2: Post-processing (less efficient but more straightforward)
-function stringifyWithPostProcessing(obj: any, pretty: boolean = false): string {
+export function stringifyWithPostProcessing(obj: any, pretty: boolean = false): string {
   let jsonString = JSON.stringify(obj, null, pretty ? 4 : 0);
   
   // Post-process to escape forward slashes
@@ -94,7 +94,7 @@ function stringifyWithPostProcessing(obj: any, pretty: boolean = false): string 
 }
 
 // Alternative native approach 3: Using toJSON method (requires object modification)
-function createEscapingObject(obj: any): any {
+export function createEscapingObject(obj: any): any {
   if (typeof obj === 'object' && obj !== null) {
     if (Array.isArray(obj)) {
       return obj.map(createEscapingObject);
@@ -129,9 +129,9 @@ async function main(): Promise<void> {
   }
 
   try {
-    console.log('Starting TSE data scraping...');
-    const scraper = new TSEScraper();
-    const data = await scraper.scrapeWithRetry();
+    console.log('Starting TSE data retrieval...');
+    const retrieve = new Retrieve();
+    const data = await retrieve.withRetry();
     
     const jsonString = stringifyWithEscaping(data, options.pretty);
 
@@ -145,7 +145,7 @@ async function main(): Promise<void> {
     }
 
   } catch (error) {
-    console.error('Error scraping TSE data:', error);
+    console.error('Error retrieving TSE data:', error);
     process.exit(1);
   }
 }

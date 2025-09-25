@@ -1,11 +1,10 @@
-import { TSEScraper } from './scraper';
-import { TSESystem, TSEData, ScrapingOptions } from './types';
+import { Retrieve } from './retrieve';
+import { List, Options } from './types';
 
-export { TSEScraper } from './scraper';
-export { TSESystem, TSEData, ScrapingOptions } from './types';
+export { Retrieve } from './retrieve';
+export { Tse, List, Options } from './types';
 
-// Main function for programmatic usage
-export async function fetchTSEData(options?: Partial<ScrapingOptions>): Promise<TSEData> {
-  const scraper = new TSEScraper(options);
-  return await scraper.scrapeWithRetry();
+export async function retrieve(options?: Partial<Options>): Promise<List> {
+  const retrieve = new Retrieve(options);
+  return await retrieve.withRetry();
 }

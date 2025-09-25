@@ -5,7 +5,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 
 async function measurePerformance() {
-  console.log('🚀 Starting TSE Scraper Performance Test\n');
+  console.log('🚀 Starting TSE Retrieve Performance Test\n');
   
   const results = {
     coldStart: 0,

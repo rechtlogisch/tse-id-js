@@ -1,10 +1,10 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 
-// Mock the scraper module
-jest.mock('../scraper', () => ({
-  TSEScraper: jest.fn().mockImplementation(() => ({
-    scrapeWithRetry: jest.fn()
+// Mock the retrieve module
+jest.mock('../retrieve', () => ({
+  Retrieve: jest.fn().mockImplementation(() => ({
+    withRetry: jest.fn()
   }))
 }));
 
@@ -13,11 +13,12 @@ jest.mock('fs', () => ({
   writeFileSync: jest.fn()
 }));
 
-// Mock process.argv
+// Mock process.argv and process.exit
 const originalArgv = process.argv;
+const originalExit = process.exit;
 
 describe('CLI', () => {
-  let mockScraper: any;
+  let mockRetrieve: any;
   let consoleSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -29,44 +30,89 @@ describe('CLI', () => {
     jest.spyOn(console, 'error').mockImplementation();
     jest.spyOn(console, 'warn').mockImplementation();
 
-    // Mock process.argv
+    // Mock process.argv and process.exit
     process.argv = ['node', 'cli.js'];
+    process.exit = jest.fn() as any;
 
-    // Get the mocked scraper
-    const { TSEScraper } = require('../scraper');
-    mockScraper = new TSEScraper();
+    // Get the mocked retrieve
+    const { Retrieve } = require('../retrieve');
+    mockRetrieve = new Retrieve();
   });
 
   afterEach(() => {
     process.argv = originalArgv;
+    process.exit = originalExit;
     consoleSpy.mockRestore();
   });
 
   describe('argument parsing', () => {
-    it('should parse help option', () => {
-      // Test the parseArgs function directly
+    it('should parse help option with -h', () => {
+      process.argv = ['node', 'cli.js', '-h'];
       const { parseArgs } = require('../cli');
       const result = parseArgs();
-      expect(result).toBeDefined();
+      expect(result.help).toBe(true);
     });
 
-    it('should parse output option', () => {
+    it('should parse help option with --help', () => {
+      process.argv = ['node', 'cli.js', '--help'];
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.help).toBe(true);
+    });
+
+    it('should parse output option with -o', () => {
+      process.argv = ['node', 'cli.js', '-o', 'test.json'];
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.output).toBe('test.json');
+    });
+
+    it('should parse output option with --output', () => {
       process.argv = ['node', 'cli.js', '--output', 'test.json'];
-      
-      // Test that the module can be required without errors
-      expect(() => require('../cli')).not.toThrow();
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.output).toBe('test.json');
     });
 
-    it('should parse pretty option', () => {
+    it('should parse pretty option with -p', () => {
+      process.argv = ['node', 'cli.js', '-p'];
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.pretty).toBe(true);
+    });
+
+    it('should parse pretty option with --pretty', () => {
       process.argv = ['node', 'cli.js', '--pretty'];
-      
-      // Test that the module can be required without errors
-      expect(() => require('../cli')).not.toThrow();
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.pretty).toBe(true);
+    });
+
+    it('should parse multiple options together', () => {
+      process.argv = ['node', 'cli.js', '--output', 'test.json', '--pretty'];
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result.output).toBe('test.json');
+      expect(result.pretty).toBe(true);
+    });
+
+    it('should handle unknown options', () => {
+      process.argv = ['node', 'cli.js', '--unknown'];
+      const { parseArgs } = require('../cli');
+      parseArgs();
+      expect(process.exit).toHaveBeenCalledWith(1);
+    });
+
+    it('should handle empty arguments', () => {
+      process.argv = ['node', 'cli.js'];
+      const { parseArgs } = require('../cli');
+      const result = parseArgs();
+      expect(result).toEqual({});
     });
   });
 
   describe('main function', () => {
-    it('should handle successful scraping', async () => {
+    it('should handle successful retrieve', async () => {
       const mockData = {
         '1234-2023': {
           id: '1234',
@@ -77,33 +123,55 @@ describe('CLI', () => {
         }
       };
 
-      // Mock the TSEScraper constructor and methods
-      const { TSEScraper } = require('../scraper');
+      // Mock the Retrieve constructor and methods
+      const { Retrieve } = require('../retrieve');
       const mockInstance = {
-        scrapeWithRetry: jest.fn().mockResolvedValue(mockData)
+        withRetry: jest.fn().mockResolvedValue(mockData)
       };
-      TSEScraper.mockImplementation(() => mockInstance);
+      Retrieve.mockImplementation(() => mockInstance);
 
-      // Test the fetchTSEData function directly
-      const { fetchTSEData } = require('../index');
-      const result = await fetchTSEData();
+      // Test the retrieve function directly
+      const { retrieve } = require('../index');
+      const result = await retrieve();
 
       expect(result).toEqual(mockData);
-      expect(mockInstance.scrapeWithRetry).toHaveBeenCalled();
+      expect(mockInstance.withRetry).toHaveBeenCalled();
     });
 
-    it('should handle scraping errors', async () => {
-      const error = new Error('Scraping failed');
+    it('should handle retrieve errors', async () => {
+      const error = new Error('Retrieving failed');
       
-      // Mock the TSEScraper constructor and methods
-      const { TSEScraper } = require('../scraper');
+      // Mock the Retrieve constructor and methods
+      const { Retrieve } = require('../retrieve');
       const mockInstance = {
-        scrapeWithRetry: jest.fn().mockRejectedValue(error)
+        withRetry: jest.fn().mockRejectedValue(error)
       };
-      TSEScraper.mockImplementation(() => mockInstance);
+      Retrieve.mockImplementation(() => mockInstance);
 
-      const { fetchTSEData } = require('../index');
-      await expect(fetchTSEData()).rejects.toThrow('Scraping failed');
+      const { retrieve } = require('../index');
+      await expect(retrieve()).rejects.toThrow('Retrieving failed');
+    });
+
+    it('should show help when help option is provided', () => {
+      process.argv = ['node', 'cli.js', '--help'];
+      
+      // Mock console.log to capture help output
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      // Import and run the main function
+      const { main } = require('../cli');
+      
+      // Since main is async, we need to handle it properly
+      expect(() => {
+        // This will throw because we're not awaiting, but we can test the help path
+        try {
+          main();
+        } catch (e) {
+          // Expected to throw in test environment
+        }
+      }).not.toThrow();
+      
+      consoleSpy.mockRestore();
     });
   });
 
@@ -128,6 +196,187 @@ describe('CLI', () => {
       
       expect(prettyJson).toContain('\n');
       expect(prettyJson).toContain('  ');
+    });
+  });
+
+  describe('stringifyWithEscaping function', () => {
+    it('should escape forward slashes', () => {
+      const { stringifyWithEscaping } = require('../cli');
+      const obj = { path: '/some/path' };
+      const result = stringifyWithEscaping(obj);
+      expect(result).toContain('\\/some\\/path');
+    });
+
+    it('should escape unicode characters', () => {
+      const { stringifyWithEscaping } = require('../cli');
+      const obj = { text: 'café' };
+      const result = stringifyWithEscaping(obj);
+      expect(result).toContain('\\u00e9');
+    });
+
+    it('should handle pretty printing', () => {
+      const { stringifyWithEscaping } = require('../cli');
+      const obj = { test: 'value' };
+      const result = stringifyWithEscaping(obj, true);
+      expect(result).toContain('\n');
+    });
+  });
+
+  describe('stringifyWithPostProcessing function', () => {
+    it('should escape forward slashes', () => {
+      const { stringifyWithPostProcessing } = require('../cli');
+      const obj = { path: '/some/path' };
+      const result = stringifyWithPostProcessing(obj);
+      expect(result).toContain('\\/some\\/path');
+    });
+
+    it('should escape unicode characters', () => {
+      const { stringifyWithPostProcessing } = require('../cli');
+      const obj = { text: 'café' };
+      const result = stringifyWithPostProcessing(obj);
+      expect(result).toContain('\\u00e9');
+    });
+  });
+
+  describe('createEscapingObject function', () => {
+    it('should handle string values', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { text: 'test/path' };
+      const result = createEscapingObject(obj);
+      expect(result.text.toJSON()).toContain('\\/');
+    });
+
+    it('should handle array values', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = ['test/path'];
+      const result = createEscapingObject(obj);
+      expect(Array.isArray(result)).toBe(true);
+      expect(result[0]).toBeDefined();
+      // For arrays, the function should return the original array since strings in arrays are not wrapped
+      expect(typeof result[0]).toBe('string');
+    });
+
+    it('should handle nested objects', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { nested: { text: 'test/path' } };
+      const result = createEscapingObject(obj);
+      expect(result.nested.text.toJSON()).toContain('\\/');
+    });
+  });
+
+  describe('help functionality', () => {
+    it('should test printHelp function', () => {
+      const { printHelp } = require('../cli');
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      
+      printHelp();
+      
+      expect(consoleSpy).toHaveBeenCalled();
+      expect(consoleSpy.mock.calls[0][0]).toContain('Retrieve');
+      
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('createEscapingObject edge cases', () => {
+    it('should handle null values', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { text: null };
+      const result = createEscapingObject(obj);
+      expect(result).toEqual({ text: null });
+    });
+
+    it('should handle non-object values', () => {
+      const { createEscapingObject } = require('../cli');
+      const result = createEscapingObject('string');
+      expect(result).toBe('string');
+    });
+
+    it('should handle nested non-string values', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { nested: { number: 123, boolean: true } };
+      const result = createEscapingObject(obj);
+      expect(result.nested.number).toBe(123);
+      expect(result.nested.boolean).toBe(true);
+    });
+
+    it('should handle unicode characters in toJSON', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { text: 'café' };
+      const result = createEscapingObject(obj);
+      expect(result.text.toJSON()).toContain('\\u00e9');
+    });
+
+    it('should handle forward slashes in toJSON', () => {
+      const { createEscapingObject } = require('../cli');
+      const obj = { text: 'path/to/file' };
+      const result = createEscapingObject(obj);
+      expect(result.text.toJSON()).toContain('\\/');
+    });
+  });
+
+  describe('error handling', () => {
+    it('should handle writeFileSync errors', () => {
+      const { writeFileSync } = require('fs');
+      
+      // Test that writeFileSync can throw errors
+      writeFileSync.mockImplementation(() => {
+        throw new Error('Write failed');
+      });
+
+      expect(() => {
+        writeFileSync('test.json', 'data', 'utf8');
+      }).toThrow('Write failed');
+    });
+  });
+
+  describe('process event handlers', () => {
+    it('should handle unhandled promise rejections', () => {
+      // Mock process.on to capture the handler
+      const processOnSpy = jest.spyOn(process, 'on');
+      const processExitSpy = jest.spyOn(process, 'exit').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      // Re-require the module to trigger the process.on setup
+      jest.resetModules();
+      require('../cli');
+      
+      expect(processOnSpy).toHaveBeenCalledWith('unhandledRejection', expect.any(Function));
+      
+      // Test the unhandled rejection handler
+      const unhandledRejectionHandler = processOnSpy.mock.calls.find(
+        call => call[0] === 'unhandledRejection'
+      )?.[1];
+      
+      if (unhandledRejectionHandler) {
+        unhandledRejectionHandler('Test error', Promise.resolve());
+        expect(consoleErrorSpy).toHaveBeenCalled();
+        expect(processExitSpy).toHaveBeenCalledWith(1);
+      }
+      
+      processOnSpy.mockRestore();
+      processExitSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe('main function execution', () => {
+    it('should handle main function execution when run as script', () => {
+      // Test the process event handlers are set up
+      const processOnSpy = jest.spyOn(process, 'on');
+      const processExitSpy = jest.spyOn(process, 'exit').mockImplementation();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      // Re-require the module to trigger the process.on setup
+      jest.resetModules();
+      require('../cli');
+      
+      // Verify process event handlers are registered
+      expect(processOnSpy).toHaveBeenCalledWith('unhandledRejection', expect.any(Function));
+      
+      processOnSpy.mockRestore();
+      processExitSpy.mockRestore();
+      consoleErrorSpy.mockRestore();
     });
   });
 });

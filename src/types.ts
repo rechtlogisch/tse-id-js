@@ -1,4 +1,4 @@
-export interface TSESystem {
+export interface Tse {
   id: string;
   year: string;
   content: string;
@@ -6,14 +6,14 @@ export interface TSESystem {
   date_issuance: string;
 }
 
-export interface TSEData {
-  [key: string]: TSESystem;
+export interface List {
+  [key: string]: Tse;
 }
 
-export interface ScrapingOptions {
-  baseUrl: string;
-  maxPages: number;
+export interface Options {
+  url: string;
   timeout: number;
+  pages?: number; // typically auto-detected
 }
 
 
