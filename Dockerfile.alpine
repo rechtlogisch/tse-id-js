@@ -7,14 +7,6 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
-# Build stage
-FROM base AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
 # Production stage - Alpine with Playwright dependencies
 FROM node:24-alpine AS runner
 WORKDIR /app
@@ -38,7 +30,7 @@ ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
 RUN npm install -g playwright@1.40.0
 
 # Copy built application
-COPY --from=builder /app/dist ./dist
+COPY --from=deps /app/dist ./dist
 COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
 
