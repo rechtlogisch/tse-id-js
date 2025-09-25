@@ -7,7 +7,15 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
-# Production stage - Use Ubuntu for better Playwright support
+# Build stage
+FROM base AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage - Use Slim for better Playwright support
 FROM node:24-slim AS runner
 WORKDIR /app
 
@@ -47,21 +55,22 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Playwright and browsers
-RUN npm install -g playwright@1.55.0
-RUN mkdir -p /ms-playwright
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN playwright install --with-deps chromium
-RUN playwright install-deps chromium
+# Copy built application
+COPY --from=builder /app/dist ./dist
+COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 retrieve
 
-# Copy built application
-COPY --from=deps /app/dist ./dist
-COPY --from=deps /app/node_modules ./node_modules
-COPY package*.json ./
+# Install Playwright browsers as root, then change ownership
+RUN npx playwright install --with-deps chromium
+RUN npx playwright install-deps chromium
+
+# Copy browsers to a location accessible by non-root user
+RUN mkdir -p /app/.cache/ms-playwright
+RUN cp -r /root/.cache/ms-playwright/* /app/.cache/ms-playwright/
 
 # Change ownership to non-root user
 RUN chown -R retrieve:nodejs /app
@@ -73,9 +82,7 @@ EXPOSE 3000
 # Set environment variables
 ENV NODE_ENV=production
 ENV HOME=/app
-
-# Set entrypoint to our CLI
-ENTRYPOINT ["node", "dist/cli.js"]
+ENV PLAYWRIGHT_BROWSERS_PATH=/app/.cache/ms-playwright
 
 # Default command
-CMD ["--help"]
+CMD ["node", "dist/cli.js", "--help"]

@@ -1,21 +1,20 @@
 #!/bin/bash
 
 # Docker build script
-# Usage: ./scripts/docker-build.sh [ubuntu|alpine|both]
+# Usage: ./scripts/docker-build.sh [slim|alpine|both]
 
 set -e
 
-BUILD_TYPE=${1:-ubuntu}
+BUILD_TYPE=${1:-alpine}
 IMAGE_NAME="tse-id"
 
 echo "🐳 Building Docker image..."
 
 case $BUILD_TYPE in
-  "ubuntu")
-    echo "📦 Building Ubuntu-based image (recommended for CI/CD)..."
-    docker build -f Dockerfile -t ${IMAGE_NAME}:ubuntu .
-    docker tag ${IMAGE_NAME}:ubuntu ${IMAGE_NAME}:latest
-    echo "✅ Ubuntu image built successfully"
+  "slim")
+    echo "📦 Building slim-based image..."
+    docker build -f Dockerfile.slim -t ${IMAGE_NAME}:slim .
+    echo "✅ Slim image built successfully"
     ;;
   
   "alpine")
@@ -26,22 +25,22 @@ case $BUILD_TYPE in
     ;;
   
   "both")
-    echo "📦 Building both Ubuntu and Alpine images..."
+    echo "📦 Building both Slim and Alpine images..."
     
-    echo "Building Ubuntu image..."
-    docker build -f Dockerfile -t ${IMAGE_NAME}:ubuntu .
+    echo "Building Slim image..."
+    docker build -f Dockerfile.slim -t ${IMAGE_NAME}:slim .
     
     echo "Building Alpine image..."
     docker build -f Dockerfile.alpine -t ${IMAGE_NAME}:alpine .
     
-    # Tag Ubuntu as latest (more reliable)
-    docker tag ${IMAGE_NAME}:ubuntu ${IMAGE_NAME}:latest
+    # Tag Apline image as latest
+    docker tag ${IMAGE_NAME}:alpine ${IMAGE_NAME}:latest
     
     echo "✅ Both images built successfully"
     ;;
   
   *)
-    echo "❌ Invalid build type. Use: ubuntu, alpine, or both"
+    echo "❌ Invalid build type. Use: slim, alpine, or both"
     exit 1
     ;;
 esac
