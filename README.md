@@ -100,7 +100,7 @@ The package outputs data in the following JSON structure:
 name: Retrieve
 on:
   schedule:
-    - cron: '0 5/17 * * *'  # Daily at 5 AM and 5 PM UTC
+    - cron: '0 5,17 * * *'  # Daily at 5 AM and 5 PM UTC
 
 jobs:
   retrieve:
