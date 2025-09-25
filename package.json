@@ -1,0 +1,59 @@
+{
+  "name": "tse-id",
+  "version": "0.1.0",
+  "description": "Retrieves a list of TSE from BSI",
+  "main": "dist/index.js",
+  "bin": {
+    "tse-id": "dist/cli.js"
+  },
+  "scripts": {
+    "build:clean": "rm -rf dist && tsc",
+    "build": "tsc --build",
+    "dev": "ts-node src/cli.ts",
+    "docker:build:all": "./scripts/docker-build.sh both",
+    "docker:build:alpine": "./scripts/docker-build.sh alpine",
+    "docker:build": "./scripts/docker-build.sh ubuntu",
+    "docker:test:help": "docker run --rm tse-id:latest --help",
+    "performance:test": "node scripts/performance-test.js",
+    "retrieve": "npm run build && node dist/cli.js",
+    "start": "node dist/cli.js",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test": "jest",
+    "test:unit": "jest --testPathIgnorePatterns=integration",
+    "test:integration": "jest --config jest.integration.config.js",
+    "test:external": "npm run test:integration"
+  },
+  "keywords": [
+    "rechtlogisch",
+    "tse-id",
+    "technische sicherheitseinrichtungen",
+    "germany"
+  ],
+  "author": "RL Recht logisch GmbH & Co. KG",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^30.0",
+    "@types/node": "^24.0",
+    "jest": "^30.0",
+    "ts-jest": "^29.1",
+    "ts-node": "^10.9",
+    "typescript": "^5.2"
+  },
+  "dependencies": {
+    "playwright": "^1.40"
+  },
+  "engines": {
+    "node": ">=22.0"
+  },
+  "overrides": {
+    "glob": "^10.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE.md"
+  ]
+}
+
+

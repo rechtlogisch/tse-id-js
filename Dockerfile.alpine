@@ -1,0 +1,57 @@
+# Alpine-based Dockerfile with Playwright support
+FROM node:24-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Build stage
+FROM base AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage - Alpine with Playwright dependencies
+FROM node:24-alpine AS runner
+WORKDIR /app
+
+# Install system dependencies for Playwright on Alpine
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    && rm -rf /var/cache/apk/*
+
+# Set Playwright to use system Chromium
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Install Playwright (without browsers)
+RUN npm install -g playwright@1.40.0
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
+COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 retrieve
+USER retrieve
+
+# Expose port (if needed for health checks)
+EXPOSE 3000
+
+# Set environment variables
+ENV NODE_ENV=production
+
+# Default command
+CMD ["node", "dist/cli.js"]
