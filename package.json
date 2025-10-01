@@ -1,6 +1,6 @@
 {
   "name": "tse-id",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Retrieves a list of TSE from BSI",
   "main": "dist/index.js",
   "bin": {

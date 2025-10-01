@@ -1,7 +1,7 @@
-![Recht logisch tse-id-php banner image](rechtlogisch-tse-id-js-banner.png)
+![Recht logisch tse-id-js banner image](rechtlogisch-tse-id-js-banner.png)
 
 [![Tests](https://img.shields.io/github/actions/workflow/status/rechtlogisch/tse-id-js/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/rechtlogisch/tse-id-js/actions/workflows/run-tests.yml)
-[![NPM Version](https://img.shields.io/npm/v/tse-id-js)](https://www.npmjs.com/package/tse-id-js)
+[![NPM Version](https://img.shields.io/npm/v/tse-id)](https://www.npmjs.com/package/tse-id)
 
 # tse-id-js
 
